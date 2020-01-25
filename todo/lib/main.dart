@@ -37,28 +37,38 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("Todo List"),
-          actions: <Widget>[Icon(Icons.accessibility)],
-        ),
-        body: ListView.builder(
-          itemCount: widget.items.length, // tamanho da lista
+    var newTaskCtrl = TextEditingController();
 
-          itemBuilder: (BuildContext ctxt, int index) {
-            // como eu construo esses itens na tela?
-            final item = widget.items[index];
-            return CheckboxListTile(
-              title: Text(item.title),
-              key: Key(item.title),
-              value: item.done,
-              onChanged: (value) {
-                setState(() {
-                  item.done = value;
-                });
-              },
-            );
-          },
-        ));
+    return Scaffold(
+      appBar: AppBar(
+        title: TextFormField(
+          controller: newTaskCtrl,
+          keyboardType: TextInputType.text,
+        ),
+        actions: <Widget>[Icon(Icons.accessibility)],
+      ),
+      body: ListView.builder(
+        itemCount: widget.items.length, // tamanho da lista
+        itemBuilder: (BuildContext ctxt, int index) {
+          // como eu construo esses itens na tela?
+          final item = widget.items[index];
+          return CheckboxListTile(
+            title: Text(item.title),
+            key: Key(item.title),
+            value: item.done,
+            onChanged: (value) {
+              setState(() {
+                item.done = value;
+              });
+            },
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: Icon(Icons.add),
+        backgroundColor: Colors.pink,
+      ),
+    );
   }
 }
