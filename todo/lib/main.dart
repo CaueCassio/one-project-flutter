@@ -85,7 +85,6 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: TextFormField(
-          title: ,
           controller: newTaskCtrl,
           keyboardType: TextInputType.text,
         ),
