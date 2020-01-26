@@ -35,10 +35,26 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  var newTaskCtrl = TextEditingController();
+
+  void add() {
+    if (newTaskCtrl.text.isEmpty) return;
+    setState(() {
+      widget.items.add(
+        Item(title: newTaskCtrl.text, done: false),
+      );
+      newTaskCtrl.text = "";
+    });
+  }
+
+  void remove(int index) {
+    setState(() {
+      widget.items.removeAt(index);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    var newTaskCtrl = TextEditingController();
-
     return Scaffold(
       appBar: AppBar(
         title: TextFormField(
@@ -48,24 +64,32 @@ class _HomePageState extends State<HomePage> {
         actions: <Widget>[Icon(Icons.accessibility)],
       ),
       body: ListView.builder(
-        itemCount: widget.items.length, // tamanho da lista
-        itemBuilder: (BuildContext ctxt, int index) {
-          // como eu construo esses itens na tela?
-          final item = widget.items[index];
-          return CheckboxListTile(
-            title: Text(item.title),
-            key: Key(item.title),
-            value: item.done,
-            onChanged: (value) {
-              setState(() {
-                item.done = value;
-              });
-            },
-          );
-        },
-      ),
+          itemCount: widget.items.length, // tamanho da lista
+          itemBuilder: (BuildContext ctxt, int index) {
+            // como eu construo esses itens na tela?
+            final item = widget.items[index];
+            return Dismissible(
+              child: CheckboxListTile(
+                title: Text(item.title),
+                value: item.done,
+                onChanged: (value) {
+                  setState(() {
+                    item.done = value;
+                  });
+                },
+              ),
+              key: Key(item.title),
+              background: Container(
+                color: Colors.red.withOpacity(0.2),
+                child: Text("Excluir"),
+              ),
+              onDismissed: (direction) {
+                remove(index);
+              },
+            );
+          }),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: add,
         child: Icon(Icons.add),
         backgroundColor: Colors.pink,
       ),
