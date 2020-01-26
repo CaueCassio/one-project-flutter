@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'models/item.dart';
 
 void main() => runApp(MyApp());
@@ -25,9 +28,9 @@ class HomePage extends StatefulWidget {
   HomePage() {
     items = [];
 
-    items.add(Item(title: "title1", done: false));
-    items.add(Item(title: "title2", done: true));
-    items.add(Item(title: "title3", done: false));
+    // items.add(Item(title: "title1", done: false));
+    // items.add(Item(title: "title2", done: true));
+    // items.add(Item(title: "title3", done: false));
   }
 
   @override
@@ -44,13 +47,37 @@ class _HomePageState extends State<HomePage> {
         Item(title: newTaskCtrl.text, done: false),
       );
       newTaskCtrl.text = "";
+      save();
     });
   }
 
   void remove(int index) {
     setState(() {
       widget.items.removeAt(index);
+      save();
     });
+  }
+
+  _HomePageState() {
+    load();
+  }
+
+  Future load() async {
+    var prefs = await SharedPreferences.getInstance();
+    var data = prefs.getString('data');
+
+    if (data != null) {
+      Iterable decoded = jsonDecode(data);
+      List<Item> result = decoded.map((x) => Item.fromJson(x)).toList();
+      setState(() {
+        widget.items = result;
+      });
+    }
+  }
+
+  save() async {
+    var prefs = await SharedPreferences.getInstance();
+    var data = prefs.setString('data', jsonEncode(widget.items));
   }
 
   @override
@@ -58,6 +85,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: TextFormField(
+          title: ,
           controller: newTaskCtrl,
           keyboardType: TextInputType.text,
         ),
@@ -75,6 +103,7 @@ class _HomePageState extends State<HomePage> {
                 onChanged: (value) {
                   setState(() {
                     item.done = value;
+                    save();
                   });
                 },
               ),
